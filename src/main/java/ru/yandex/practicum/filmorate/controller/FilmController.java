@@ -10,7 +10,7 @@ import ru.yandex.practicum.filmorate.model.Film;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/films")
+@RequestMapping("/films")
 public class FilmController {
 
     private final FilmManager manager = new FilmManagerInMemory();
