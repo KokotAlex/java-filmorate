@@ -1,37 +1,39 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.manager.UserManager;
+import ru.yandex.practicum.filmorate.manager.ModelManagerAbs;
 import ru.yandex.practicum.filmorate.manager.UserManagerInMemory;
 import ru.yandex.practicum.filmorate.model.User;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
 @RequestMapping("/users")
-public class UserController {
+public class UserController extends ControllerAbs<User> {
 
-    private final UserManager manager = new UserManagerInMemory();
-    private static final Logger log = LoggerFactory.getLogger(UserController.class);
+    private final ModelManagerAbs<User> manager = new UserManagerInMemory();
 
+    @Override
     @GetMapping
-    public List<User> getUser() {
+    public ResponseEntity<List<User>> getAll() {
         log.info("Обработка запроса на получение всех пользователей.");
-        return manager.getUser();
+        return ResponseEntity.ok(manager.get());
     }
 
+    @Override
     @PostMapping
-    public User postUser(@RequestBody User user) {
+    public ResponseEntity<User> add(@Valid @RequestBody User user) {
         log.info("Обработка запроса на добавление пользователя {}", user);
-        return manager.addUser(user);
+        return ResponseEntity.ok(manager.add(user));
     }
 
+    @Override
     @PutMapping
-    public User putUser(@RequestBody User user) {
+    public ResponseEntity<User> Update(@Valid @RequestBody User user) {
         log.info("Обработка запроса на обновление пользователя {}", user);
-        return manager.updateUser(user);
+        return ResponseEntity.ok(manager.update(user));
     }
 
 }

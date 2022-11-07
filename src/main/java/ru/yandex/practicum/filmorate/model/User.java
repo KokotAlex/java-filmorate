@@ -1,10 +1,10 @@
 package ru.yandex.practicum.filmorate.model;
 
 import lombok.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import ru.yandex.practicum.filmorate.validator.UserValidator;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.PastOrPresent;
 import java.time.LocalDate;
 import java.util.Objects;
 
@@ -13,12 +13,13 @@ import java.util.Objects;
 @ToString
 public class User {
     private Integer id;
+    @Email
     private String email;
+    @NotBlank
     private String login;
     private String name;
+    @PastOrPresent
     private LocalDate birthday;
-    private static final Logger log = LoggerFactory.getLogger(User.class);
-
 
     public User(String email, String login, String name, LocalDate birthday) {
         // Выполним проверку корректности передаваемых данных.
@@ -30,8 +31,6 @@ public class User {
             this.name = name;
         }
         this.birthday = birthday;
-        UserValidator.userValidate(this);
-        log.info("Создан пользователь: {}", this);
     }
 
     @Override

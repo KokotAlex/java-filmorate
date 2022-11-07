@@ -1,10 +1,11 @@
 package ru.yandex.practicum.filmorate.model;
 
 import lombok.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import ru.yandex.practicum.filmorate.validator.FilmValidator;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.Objects;
 
@@ -13,19 +14,21 @@ import java.util.Objects;
 @ToString
 public class Film {
     private Integer id;
-    private final String name;
+    @NotBlank
+    private String name;
+    @NotBlank
+    @Size(max = 200)
     private String description;
+    @NotNull
     private LocalDate releaseDate;
+    @Positive
     private Integer duration;
-    private static final Logger log = LoggerFactory.getLogger(Film.class);
 
     public Film(String name, String description, LocalDate releaseDate, Integer duration) {
         this.name = name;
         this.description = description;
         this.releaseDate = releaseDate;
         this.duration = duration;
-        FilmValidator.filmValidate(this);
-        log.info("Создан фильм: {}", this);
     }
 
     @Override
