@@ -7,7 +7,10 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
+import java.util.Comparator;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -23,6 +26,8 @@ public class Film {
     private LocalDate releaseDate;
     @Positive
     private Integer duration;
+
+    private Set<Integer> likes = new HashSet<>();
 
     public Film(String name, String description, LocalDate releaseDate, Integer duration) {
         this.name = name;
@@ -43,4 +48,13 @@ public class Film {
     public int hashCode() {
         return Objects.hash(id);
     }
+
+    public static class LikeComparator implements Comparator<Film> {
+
+        @Override
+        public int compare(Film film1, Film film2) {
+            return film1.likes.size() - film2.likes.size();
+        }
+    }
+
 }
