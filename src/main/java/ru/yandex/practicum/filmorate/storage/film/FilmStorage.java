@@ -11,15 +11,15 @@ public interface FilmStorage {
 
     List<Film> getAll();
 
-    Optional<Film> update(Film film);
+    Film update(Film film);
 
-    Film getById(Integer id);
+    Optional<Film> getById(Integer id);
 
     List<Film> getTop(Integer count);
 
-    Film addLike(Integer filmId, Integer userId);
+    void addLike(Film film, Integer userId);
 
-    void deleteLike(Integer filmId, Integer userId);
+    void deleteLike(Film film, Integer userId);
 
     boolean isFilmExist(Integer filmId);
 

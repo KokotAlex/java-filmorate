@@ -38,20 +38,20 @@ public class UserService implements ModelService<User> {
     @Override
     public User update(User user) {
         log.debug("Начало обновления пользователя {}", user);
-        Optional<User> updatedUser = storage.update(user);
-        if (updatedUser.isEmpty()) {
-            throw new NotFoundException("Пользователь: " + user + " отсутствует в базе пользователей");
-        }
+        User updatedUser = storage.update(user);
         log.debug("Окончание обновления пользователя {}", updatedUser);
-        return updatedUser.get();
+        return updatedUser;
     }
 
     @Override
     public User getById(Integer id) {
         log.debug("Начало получения пользователя по id: {}", id);
-        User user = storage.getById(id);
+        Optional<User> userOptional = storage.getById(id);
+        if (userOptional.isEmpty()) {
+            throw new NotFoundException("User с id:" + id + " не найден.");
+        }
         log.debug("Окончание получения пользователя по id: {}", id);
-        return user;
+        return userOptional.get();
     }
 
     public void addFriend(Integer friendId1, Integer friendId2) {

@@ -29,27 +29,31 @@ public class FilmController {
     @GetMapping
     public ResponseEntity<List<Film>> getAll() {
         log.info("Обработка запроса на получение всех фильмов.");
-        return ResponseEntity.ok(service.getAll());
+        List<Film> films = service.getAll();
+        return ResponseEntity.ok(films);
     }
 
     @PostMapping
     public ResponseEntity<Film> add(@Valid  @RequestBody Film film) {
         log.info("Обработка запроса на добавление фильма {}", film);
         FilmValidator.validate(film);
-        return ResponseEntity.ok(service.add(film));
+        Film addedFilm = service.add(film);
+        return ResponseEntity.ok(addedFilm);
     }
 
     @PutMapping
     public ResponseEntity<Film> Update(@Valid @RequestBody Film film) {
         log.info("Обработка запроса на обновление фильма {}", film);
         FilmValidator.validate(film);
-        return ResponseEntity.ok(service.update(film));
+        Film updatedFilm = service.update(film);
+        return ResponseEntity.ok(updatedFilm);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Film> getById(@PathVariable Integer id) {
         log.info("Обработка запроса получения фильма с id {}", id);
-        return ResponseEntity.ok(service.getById(id));
+        Film film = service.getById(id);
+        return ResponseEntity.ok(film);
     }
 
     @GetMapping("/popular")
@@ -58,13 +62,15 @@ public class FilmController {
         if (count < 1) {
             throw new IncorrectParameterException("count");
         }
-        return ResponseEntity.ok(service.getTop(count));
+        List<Film> films = service.getTop(count);
+        return ResponseEntity.ok(films);
     }
 
     @PutMapping("/{id}/like/{userId}")
     public ResponseEntity<Film> addLike(@PathVariable Integer id, @PathVariable Integer userId) {
         log.info("Обработка запроса добавления лайка фильму с id {} пользователем с id {} ", id, userId);
-        return ResponseEntity.ok(service.addLike(id, userId));
+        Film film = service.addLike(id, userId);
+        return ResponseEntity.ok(film);
     }
 
     @DeleteMapping("/{id}/like/{userId}")

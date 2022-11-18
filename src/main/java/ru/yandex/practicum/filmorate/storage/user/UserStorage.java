@@ -11,9 +11,9 @@ public interface UserStorage {
 
     List<User> getAll();
 
-    Optional<User> update(User user);
+    User update(User user);
 
-    User getById(Integer id);
+    Optional<User> getById(Integer id);
 
     void addFriend(User friend1, User friend2);
 

@@ -25,19 +25,22 @@ public class UserController {
     @GetMapping
     public ResponseEntity<List<User>> getAll() {
         log.info("Обработка запроса на получение всех пользователей.");
-        return ResponseEntity.ok(service.getAll());
+        List<User> users = service.getAll();
+        return ResponseEntity.ok(users);
     }
 
     @PostMapping
     public ResponseEntity<User> add(@Valid @RequestBody User user) {
         log.info("Обработка запроса на добавление пользователя {}", user);
-        return ResponseEntity.ok(service.add(user));
+        User addedUser = service.add(user);
+        return ResponseEntity.ok(addedUser);
     }
 
     @PutMapping
     public ResponseEntity<User> Update(@Valid @RequestBody User user) {
         log.info("Обработка запроса на обновление пользователя {}", user);
-        return ResponseEntity.ok(service.update(user));
+        User updatedUser = service.update(user);
+        return ResponseEntity.ok(updatedUser);
     }
 
     @PutMapping("/{id}/friends/{friendId}")
@@ -55,19 +58,22 @@ public class UserController {
     @GetMapping("/{id}/friends/common/{otherId}")
     public ResponseEntity<List<User>> getMutualFriends(@PathVariable Integer id, @PathVariable Integer otherId) {
         log.info("Обработка запроса на получение общих друзей для пользователей с id {} и {}", id, otherId);
-        return ResponseEntity.ok(service.getMutualFriends(id, otherId));
+        List<User> friends = service.getMutualFriends(id, otherId);
+        return ResponseEntity.ok(friends);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<User> getById(@PathVariable Integer id) {
         log.info("Обработка запроса получения пользователя с id {}", id);
-        return ResponseEntity.ok(service.getById(id));
+        User user = service.getById(id);
+        return ResponseEntity.ok(user);
     }
 
     @GetMapping("/{id}/friends")
     public ResponseEntity<List<User>> getFriends(@PathVariable Integer id) {
         log.info("Обработка запроса получения друзей пользователя с id {}", id);
-        return ResponseEntity.ok(service.getFriends(id));
+        List<User> friends = service.getFriends(id);
+        return ResponseEntity.ok(friends);
     }
 
 }

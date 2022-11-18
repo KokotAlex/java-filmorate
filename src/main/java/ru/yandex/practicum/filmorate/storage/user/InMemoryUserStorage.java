@@ -28,21 +28,21 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public Optional<User> update(User user) {
+    public User update(User user) {
         // Проверим наличие пользователя в базе пользователей.
         final Integer userId = user.getId();
-        if (isUserExist(userId)) {
-            users.put(userId, user);
-            return Optional.of(user);
+        if (!isUserExist(userId)) {
+            throw new NotFoundException("Пользователь: " + user + " отсутствует в базе пользователей");
         }
-        return Optional.empty();
+        users.put(userId, user);
+        return user;
     }
 
-    public User getById(Integer id) {
+    public Optional<User> getById(Integer id) {
         if (!isUserExist(id)) {
-            throw new NotFoundException("User с id:" + id + " не найден.");
+            return Optional.empty();
         }
-        return users.get(id);
+        return Optional.of(users.get(id));
     }
 
     @Override
@@ -68,7 +68,9 @@ public class InMemoryUserStorage implements UserStorage {
         Set<Integer> friends2 = friend2.getFriends();
         return friends1.stream().
                 filter(friends2::contains). // Получили общие идентификаторы друзей.
-                map(this::getById). // Преобразовали идентификаторы в User.
+                map(this::getById). // Преобразовали идентификаторы в Optional<User>.
+                filter(Optional::isPresent). // На всякий случай отфильтруем заполненные.
+                map(Optional::get). // Преобразовали Optional<User> в User.
                 collect(Collectors.toList()); // Преобразовали результат в список.
     }
 
@@ -77,6 +79,8 @@ public class InMemoryUserStorage implements UserStorage {
         return  user.getFriends(). // Получили Set идентификаторов друзей.
                 stream(). // Преобразовали в stream
                 map(this::getById). // Преобразовали идентификаторы в User.
+                filter(Optional::isPresent). // На всякий случай отфильтруем заполненные.
+                map(Optional::get). // Преобразовали Optional<User> в User.
                 collect(Collectors.toList()); // Преобразовали результат в список.
     }
 

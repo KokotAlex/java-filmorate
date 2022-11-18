@@ -27,22 +27,22 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public Optional<Film> update(Film film) {
+    public Film update(Film film) {
         // Проверим наличие фильма в фильмотеке.
         final Integer filmId = film.getId();
-        if (isFilmExist(filmId)) {
-            films.put(filmId, film);
-            return Optional.of(film);
+        if (!isFilmExist(filmId)) {
+            throw new NotFoundException("Фильм " + film + " отсутствует в фильмотеке");
         }
-        return Optional.empty();
+        films.put(filmId, film);
+        return film;
     }
 
     @Override
-    public Film getById(Integer id) {
+    public Optional<Film> getById(Integer id) {
         if (!isFilmExist(id)) {
-            throw new NotFoundException("film с id:" + id + " не найден.");
+            return Optional.empty();
         }
-        return films.get(id);
+        return Optional.of(films.get(id));
     }
 
     @Override
@@ -57,16 +57,13 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public Film addLike(Integer filmId, Integer userId) {
-        Film film = getById(filmId);
+    public void addLike(Film film, Integer userId) {
         Set<Integer> likes = film.getLikes();
         likes.add(userId);
-        return film;
     }
 
     @Override
-    public void deleteLike(Integer filmId, Integer userId) {
-        Film film = getById(filmId);
+    public void deleteLike(Film film, Integer userId) {
         Set<Integer> likes = film.getLikes();
         likes.remove(userId);
     }

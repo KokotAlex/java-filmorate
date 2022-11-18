@@ -41,20 +41,20 @@ public class FilmService implements ModelService<Film> {
     @Override
     public Film update(Film film) {
         log.debug("Начало обновления данных фильма {}", film);
-        Optional<Film> filmOptional = filmStorage.update(film);
-        if (filmOptional.isEmpty()) {
-            throw new NotFoundException("Фильм " + film + " отсутствует в фильмотеке");
-        }
+        Film updatedFilm = filmStorage.update(film);
         log.debug("Окончание обновления данных фильма {}", film);
-        return filmOptional.get();
+        return updatedFilm;
     }
 
     @Override
     public Film getById(Integer id) {
         log.debug("Начало получения фильма по id: {}", id);
-        Film film = filmStorage.getById(id);
+        Optional<Film> filmOptional = filmStorage.getById(id);
+        if (filmOptional.isEmpty()) {
+            throw new NotFoundException("film с id:" + id + " не найден.");
+        }
         log.debug("Окончание получения фильма по id: {}", id);
-        return film;
+        return filmOptional.get();
     }
 
     public List<Film> getTop(Integer count) {
@@ -73,8 +73,10 @@ public class FilmService implements ModelService<Film> {
         if (!userStorage.isUserExist(userId)) {
             throw new NotFoundException("Пользователь с id: " + userId + " не найден");
         }
+        // Получим фильм, в который нужно добавить лайк.
+        Film film = getById(filmId);
         // Добавим лайк.
-        Film film = filmStorage.addLike(filmId, userId);
+        filmStorage.addLike(film, userId);
         log.debug("Окончание добавления лайка фильму с id {} пользователем с id {}", filmId, userId);
         return film;
     }
@@ -88,8 +90,10 @@ public class FilmService implements ModelService<Film> {
         if (!userStorage.isUserExist(userId)) {
             throw new NotFoundException("Пользователь с id: " + userId + " не найден");
         }
+        // Получим фильм, по которому нужно удалить лайк.
+        Film film = getById(filmId);
         // Удалим лайк.
-        filmStorage.deleteLike(filmId, userId);
+        filmStorage.deleteLike(film, userId);
         log.debug("Окончание удаления лайка фильму с id {} пользователем с id {}", filmId, userId);
     }
 
