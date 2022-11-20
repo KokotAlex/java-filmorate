@@ -1,18 +1,23 @@
 package ru.yandex.practicum.filmorate.storage.user;
 
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.Storage;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface UserStorage {
+public interface UserStorage extends Storage<User> {
 
+    @Override
     User add(User user);
 
+    @Override
     List<User> getAll();
 
+    @Override
     User update(User user);
 
+    @Override
     Optional<User> getById(Integer id);
 
     void addFriend(User friend1, User friend2);
@@ -23,6 +28,6 @@ public interface UserStorage {
 
     List<User> getFriends(User user);
 
-    boolean isUserExist(Integer userId);
+    boolean isUserNotExist(Integer userId);
 
 }

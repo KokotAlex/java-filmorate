@@ -1,5 +1,8 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -10,7 +13,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import ru.yandex.practicum.filmorate.exception.IncorrectParameterException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
-import ru.yandex.practicum.filmorate.model.ApiError;
 
 @ControllerAdvice
 public class ErrorHandler {
@@ -47,6 +49,14 @@ public class ErrorHandler {
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(new ApiError("500", exception.getMessage()));
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    private static class ApiError {
+        private String message;
+        private String debugMessage;
     }
 
 }

@@ -18,6 +18,7 @@ public class InMemoryFilmStorage implements FilmStorage {
         createFilm(film);
         // Добавим фильм в фильмотеку.
         films.put(film.getId(), film);
+
         return film;
     }
 
@@ -30,18 +31,20 @@ public class InMemoryFilmStorage implements FilmStorage {
     public Film update(Film film) {
         // Проверим наличие фильма в фильмотеке.
         final Integer filmId = film.getId();
-        if (!isFilmExist(filmId)) {
+        if (isFilmNotExist(filmId)) {
             throw new NotFoundException("Фильм " + film + " отсутствует в фильмотеке");
         }
         films.put(filmId, film);
+
         return film;
     }
 
     @Override
     public Optional<Film> getById(Integer id) {
-        if (!isFilmExist(id)) {
+        if (isFilmNotExist(id)) {
             return Optional.empty();
         }
+
         return Optional.of(films.get(id));
     }
 
@@ -53,6 +56,7 @@ public class InMemoryFilmStorage implements FilmStorage {
 
         List<Film> fulTop = new ArrayList<>(films.values());
         fulTop.sort(new Film.LikeComparator().reversed());
+
         return fulTop.subList(0, Integer.min(fulTop.size(), count));
     }
 
@@ -69,8 +73,8 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public boolean isFilmExist(Integer filmId) {
-        return films.containsKey(filmId);
+    public boolean isFilmNotExist(Integer filmId) {
+        return !films.containsKey(filmId);
     }
 
     private void createFilm(Film film) {

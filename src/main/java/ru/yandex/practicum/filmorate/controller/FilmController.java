@@ -29,53 +29,66 @@ public class FilmController {
     @GetMapping
     public ResponseEntity<List<Film>> getAll() {
         log.info("Обработка запроса на получение всех фильмов.");
+
         List<Film> films = service.getAll();
+
         return ResponseEntity.ok(films);
     }
 
     @PostMapping
     public ResponseEntity<Film> add(@Valid  @RequestBody Film film) {
         log.info("Обработка запроса на добавление фильма {}", film);
+
         FilmValidator.validate(film);
         Film addedFilm = service.add(film);
+
         return ResponseEntity.ok(addedFilm);
     }
 
     @PutMapping
     public ResponseEntity<Film> Update(@Valid @RequestBody Film film) {
         log.info("Обработка запроса на обновление фильма {}", film);
+
         FilmValidator.validate(film);
         Film updatedFilm = service.update(film);
+
         return ResponseEntity.ok(updatedFilm);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Film> getById(@PathVariable Integer id) {
         log.info("Обработка запроса получения фильма с id {}", id);
+
         Film film = service.getById(id);
+
         return ResponseEntity.ok(film);
     }
 
     @GetMapping("/popular")
     public ResponseEntity<List<Film>> getTop(@RequestParam(defaultValue = "10") Integer count) {
         log.info("Обработка запроса получения {} самых популярных фильмов", count);
+
         if (count < 1) {
             throw new IncorrectParameterException("count");
         }
         List<Film> films = service.getTop(count);
+
         return ResponseEntity.ok(films);
     }
 
     @PutMapping("/{id}/like/{userId}")
     public ResponseEntity<Film> addLike(@PathVariable Integer id, @PathVariable Integer userId) {
         log.info("Обработка запроса добавления лайка фильму с id {} пользователем с id {} ", id, userId);
+
         Film film = service.addLike(id, userId);
+
         return ResponseEntity.ok(film);
     }
 
     @DeleteMapping("/{id}/like/{userId}")
     public void deleteLike(@PathVariable Integer id, @PathVariable Integer userId) {
         log.info("Обработка запроса удаления лайка фильму с id {} пользователем с id {} ", id, userId);
+
         service.deleteLike(id, userId);
     }
 

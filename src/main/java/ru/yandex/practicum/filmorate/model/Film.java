@@ -41,6 +41,7 @@ public class Film {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Film film = (Film) o;
+
         return Objects.equals(id, film.id);
     }
 
