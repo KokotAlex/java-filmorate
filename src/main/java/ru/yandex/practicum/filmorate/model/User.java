@@ -6,7 +6,9 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.PastOrPresent;
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -20,6 +22,8 @@ public class User {
     private String name;
     @PastOrPresent
     private LocalDate birthday;
+
+    private Set<Integer> friends = new HashSet<>();
 
     public User(String email, String login, String name, LocalDate birthday) {
         // Выполним проверку корректности передаваемых данных.
@@ -38,6 +42,7 @@ public class User {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
+
         return Objects.equals(id, user.id);
     }
 
