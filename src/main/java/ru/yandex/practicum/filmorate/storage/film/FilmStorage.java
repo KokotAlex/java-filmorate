@@ -22,9 +22,9 @@ public interface FilmStorage extends Storage<Film> {
 
     List<Film> getTop(Integer count);
 
-    void addLike(Film film, Integer userId);
+    Film addLike(Integer filmId, Integer userId);
 
-    void deleteLike(Film film, Integer userId);
+    void deleteLike(Integer filmId, Integer userId);
 
     boolean isFilmNotExist(Integer filmId);
 

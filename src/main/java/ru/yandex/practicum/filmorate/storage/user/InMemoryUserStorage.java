@@ -40,6 +40,7 @@ public class InMemoryUserStorage implements UserStorage {
         return user;
     }
 
+    @Override
     public Optional<User> getById(Integer id) {
         if (isUserNotExist(id)) {
             return Optional.empty();
@@ -51,16 +52,19 @@ public class InMemoryUserStorage implements UserStorage {
     @Override
     public void addFriend(User friend1, User friend2) {
         // Добавим пользователей друг другу в друзья.
-        friend1.getFriends().add(friend2.getId());
-        friend2.getFriends().add(friend1.getId());
+        friend1.getFriends().put(friend2.getId(), true);
+        // Для friend2 добавим неподтвержденного друга friend1 если его еще нет.
+        if (!friend2.getFriends().containsKey(friend1.getId())) {
+            friend2.getFriends().put(friend1.getId(), false);
+        }
     }
 
     @Override
     public boolean deleteFriend(User friend1, User friend2) {
-        Set<Integer> friends1 = friend1.getFriends();
-        Set<Integer> friends2 = friend2.getFriends();
+        Map<Integer, Boolean> friends1 = friend1.getFriends();
+        Map<Integer, Boolean> friends2 = friend2.getFriends();
 
-        if (!friends1.contains(friend2.getId()) || !friends2.contains(friend1.getId())) {
+        if (!friends1.containsKey(friend2.getId()) || !friends2.containsKey(friend1.getId())) {
             return false;
         }
 
@@ -68,12 +72,19 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public List<User> getMutualFriends(User friend1, User friend2) {
-        Set<Integer> friends1 = friend1.getFriends();
-        Set<Integer> friends2 = friend2.getFriends();
+    public List<User> getMutualFriends(Integer friendId1, Integer friendId2) {
 
-        return friends1.stream().
-                filter(friends2::contains). // Получили общие идентификаторы друзей.
+        // Получим пользователей по переданным идентификаторам.
+        Optional<User> friend1 = getById(friendId1);
+        Optional<User> friend2 = getById(friendId2);
+
+        // Получим друзей обоих пользователей.
+        Map<Integer, Boolean> friends1 = friend1.get().getFriends();
+        Map<Integer, Boolean> friends2 = friend2.get().getFriends();
+
+        // Вычислим общих друзей и сформируем из них список.
+        return friends1.keySet().stream().
+                filter(friends2.keySet()::contains). // Получили общие идентификаторы друзей.
                 map(this::getById). // Преобразовали идентификаторы в Optional<User>.
                 filter(Optional::isPresent). // На всякий случай отфильтруем заполненные.
                 map(Optional::get). // Преобразовали Optional<User> в User.
@@ -81,13 +92,8 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public List<User> getFriends(User user) {
-        return  user.getFriends(). // Получили Set идентификаторов друзей.
-                stream(). // Преобразовали в stream
-                map(this::getById). // Преобразовали идентификаторы в User.
-                filter(Optional::isPresent). // На всякий случай отфильтруем заполненные.
-                map(Optional::get). // Преобразовали Optional<User> в User.
-                collect(Collectors.toList()); // Преобразовали результат в список.
+    public Map<Integer, Boolean> getFriends(User user) {
+        return user.getFriends();
     }
 
     @Override

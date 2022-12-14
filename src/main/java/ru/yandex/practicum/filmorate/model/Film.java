@@ -7,10 +7,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @Getter
 @Setter
@@ -27,13 +24,27 @@ public class Film {
     @Positive
     private Integer duration;
 
+    private Mpa mpa;
+
+    private TreeSet<Genre> genres;
     private Set<Integer> likes = new HashSet<>();
 
-    public Film(String name, String description, LocalDate releaseDate, Integer duration) {
+    public Film() {}
+
+    public Film(Integer id,
+                String name,
+                String description,
+                LocalDate releaseDate,
+                Integer duration,
+                Mpa mpa,
+                TreeSet<Genre> genres) {
+        this.id = id;
         this.name = name;
         this.description = description;
         this.releaseDate = releaseDate;
         this.duration = duration;
+        this.genres = genres;
+        this.mpa = mpa;
     }
 
     @Override

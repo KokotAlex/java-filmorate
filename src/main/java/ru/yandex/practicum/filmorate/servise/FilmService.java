@@ -1,6 +1,9 @@
 package ru.yandex.practicum.filmorate.servise;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -12,11 +15,13 @@ import java.util.List;
 @Service
 public class FilmService implements ModelService<Film> {
 
+    private static final Logger log = LoggerFactory.getLogger(FilmService.class);
+
     private final FilmStorage filmStorage;
     private final UserStorage userStorage;
 
     @Autowired
-    public FilmService(FilmStorage filmStorage, UserStorage userStorage) {
+    public FilmService(@Qualifier("filmDbStorage") FilmStorage filmStorage, @Qualifier("userDbStorage") UserStorage userStorage) {
         this.filmStorage = filmStorage;
         this.userStorage = userStorage;
     }
@@ -47,6 +52,11 @@ public class FilmService implements ModelService<Film> {
     public Film update(Film film) {
         log.debug("Начало обновления данных фильма {}", film);
 
+        // Проверим наличие фильма в фильмотеке.
+        Integer filmId = film.getId();
+        if (filmStorage.isFilmNotExist(filmId)) {
+            throw new NotFoundException("Фильм " + film + " отсутствует в фильмотеке");
+        }
         Film updatedFilm = filmStorage.update(film);
 
         log.debug("Окончание обновления данных фильма {}", film);
@@ -87,10 +97,8 @@ public class FilmService implements ModelService<Film> {
             throw new NotFoundException("Пользователь с id: " + userId + " не найден");
         }
 
-        // Получим фильм, в который нужно добавить лайк.
-        Film film = getById(filmId);
         // Добавим лайк.
-        filmStorage.addLike(film, userId);
+        Film film = filmStorage.addLike(filmId, userId);
 
         log.debug("Окончание добавления лайка фильму с id {} пользователем с id {}", filmId, userId);
 
@@ -108,10 +116,8 @@ public class FilmService implements ModelService<Film> {
             throw new NotFoundException("Пользователь с id: " + userId + " не найден");
         }
 
-        // Получим фильм, по которому нужно удалить лайк.
-        Film film = getById(filmId);
         // Удалим лайк.
-        filmStorage.deleteLike(film, userId);
+        filmStorage.deleteLike(filmId, userId);
 
         log.debug("Окончание удаления лайка фильму с id {} пользователем с id {}", filmId, userId);
     }

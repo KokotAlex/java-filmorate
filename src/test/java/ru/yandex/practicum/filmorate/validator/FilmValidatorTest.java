@@ -5,8 +5,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.model.Mpa;
 
 import java.time.LocalDate;
+import java.util.TreeSet;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -21,8 +24,10 @@ class FilmValidatorTest {
         String description = "adipisicing";
         LocalDate releaseDate = LocalDate.of(1967, 3, 25);
         Integer duration = 100;
+        TreeSet<Genre> genres = new TreeSet<>();
+        Mpa mpa = new Mpa(1, "G", "у фильма нет возрастных ограничений");
 
-        film = new Film(name, description, releaseDate, duration);
+        film = new Film(1, name, description, releaseDate, duration, mpa, genres);
     }
 
     @Test
