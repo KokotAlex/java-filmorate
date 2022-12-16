@@ -3,7 +3,6 @@ package ru.yandex.practicum.filmorate.servise;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
@@ -20,7 +19,7 @@ public class UserService implements ModelService<User> {
     private final UserStorage storage;
 
     @Autowired
-    public UserService(@Qualifier("userDbStorage") UserStorage storage) {
+    public UserService(UserStorage storage) {
         this.storage = storage;
     }
 
@@ -77,16 +76,33 @@ public class UserService implements ModelService<User> {
         }
     }
 
-    public void addFriend(Integer friendId1, Integer friendId2) {
-        log.debug("Начало добавления пользователей с id {} и {} друг другу в друзья", friendId1, friendId2);
+    public void addFriend(Integer userId, Integer friendId) {
+        log.debug("Начало добавления пользователей с id {} и {} друг другу в друзья", userId, friendId);
 
-        // Получим пользователей по переданным идентификаторам.
-        User friend1 = getById(friendId1);
-        User friend2 = getById(friendId2);
-        // Добавим пользователей друг друга в друзья.
-        storage.addFriend(friend1, friend2);
+        // Проверим существование пользователей в БД.
+        if (storage.isUserNotExist(userId)) {
+            throw new NotFoundException("Не найден пользователь с id: " + userId);
+        }
+        if (storage.isUserNotExist(friendId)) {
+            throw new NotFoundException("Не найден пользователь c id: " + friendId);
+        }
 
-        log.debug("Окончание добавления пользователей с id {} и {} друг другу в друзья", friendId1, friendId2);
+        // Т.к. user сделал запрос дружбы с friend, то friend для user автоматически является подтвержденным другом.
+        // Добавим пользователя friend в качестве подтвержденного пользователя для user
+        if (storage.isUser1HaveFriendUser2(userId, friendId)) {
+            storage.updateFriend(userId, friendId, true);
+        } else {
+            storage.insertFriend(userId, friendId, true);
+        }
+
+        // Т.к. user сделал запрос дружбы с friend, то нужно проверить, является user другом для friend.
+        // Если является (неважно в каком статусе), то ничего не делаем.
+        // Иначе фиксируем запись, что user для friend на текущий момент является неподтвержденным другом.
+        if (!storage.isUser1HaveFriendUser2(friendId, userId)) {
+            storage.insertFriend(friendId, userId, false);
+        }
+
+        log.debug("Окончание добавления пользователей с id {} и {} друг другу в друзья", userId, friendId);
     }
 
     public void deleteFriend(Integer friendId1, Integer friendId2) {
@@ -95,7 +111,7 @@ public class UserService implements ModelService<User> {
         // Получим пользователей по переданным идентификаторам.
         User friend1 = getById(friendId1);
         User friend2 = getById(friendId2);
-        // Удалим пользователей у друг друга из друзей.
+        // Удалим пользователей друг у друга из друзей.
         boolean Success = storage.deleteFriend(friend1, friend2);
         if (! Success) {
             throw new NotFoundException("пользователи с id "

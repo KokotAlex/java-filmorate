@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS users (
     email varchar(100),
     login varchar(50),
     user_name varchar(100),
-    birthday date
+    birthday date DEFAULT '1.1.1'
 );
 
 -- создадим таблицу film_likes

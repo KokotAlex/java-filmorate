@@ -48,7 +48,8 @@ public class FilmDbStorage implements FilmStorage {
         addFilmGenres(film);
 
         // Получим созданный в базе данных фильм.
-        return getById(filmId).orElseThrow(() -> new NotFoundException("Film с id:" + filmId + " не найден."));
+        return getById(filmId).
+                orElseThrow(() -> new NotFoundException("Film с id:" + filmId + " не найден."));
     }
 
     @Override
@@ -107,7 +108,8 @@ public class FilmDbStorage implements FilmStorage {
         addFilmLikes(film);
 
         // Получим обновленный фильм.
-        return getById(filmId).orElseThrow(() -> new NotFoundException("Film с id:" + filmId + " не найден."));
+        return getById(filmId).
+                orElseThrow(() -> new NotFoundException("Film с id:" + filmId + " не найден."));
     }
 
     @Override
@@ -168,7 +170,8 @@ public class FilmDbStorage implements FilmStorage {
         List <Film> films = new ArrayList<>();
         while (filmsRows.next()) {
             Integer filmId = filmsRows.getInt("FILM_ID");
-            Film film = getById(filmId).orElseThrow(() -> new NotFoundException("Film с id:" + filmId + " не найден."));
+            Film film = getById(filmId).
+                    orElseThrow(() -> new NotFoundException("Film с id:" + filmId + " не найден."));
             films.add(film);
         }
 
@@ -178,7 +181,8 @@ public class FilmDbStorage implements FilmStorage {
     @Override
     public Film addLike(Integer filmId, Integer userId) {
         addFilmLikes(filmId, userId);
-        return getById(filmId).orElseThrow(() -> new NotFoundException("Film с id:" + filmId + " не найден."));
+        return getById(filmId).
+                orElseThrow(() -> new NotFoundException("Film с id:" + filmId + " не найден."));
     }
 
     @Override

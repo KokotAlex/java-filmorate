@@ -25,7 +25,7 @@ public class GenreDbStorage {
         SqlRowSet GenreRows = jdbcTemplate.queryForRowSet(QUERY);
         List<Genre> genres = new LinkedList<>();
         while (GenreRows.next()) {
-            genres.add(new Genre(GenreRows.getInt("GENRE_ID"),
+            genres.add(createInMemory(GenreRows.getInt("GENRE_ID"),
                     GenreRows.getString("GENRE_NAME")));
         }
 
@@ -42,6 +42,10 @@ public class GenreDbStorage {
         } else {
             return Optional.empty();
         }
+    }
+
+    private Genre createInMemory(Integer id, String name) {
+        return new Genre(id, name);
     }
 
 }

@@ -21,7 +21,11 @@ public interface UserStorage extends Storage<User> {
     @Override
     Optional<User> getById(Integer id);
 
-    void addFriend(User friend1, User friend2);
+    void insertFriend(Integer userId, Integer friendId, boolean approved);
+
+    void updateFriend(Integer userId, Integer friendId, boolean approved);
+
+    boolean isUser1HaveFriendUser2(Integer userId1, Integer userId2);
 
     boolean deleteFriend(User friend1, User friend2);
 

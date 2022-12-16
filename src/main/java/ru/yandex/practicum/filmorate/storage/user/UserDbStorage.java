@@ -100,41 +100,22 @@ public class UserDbStorage implements UserStorage {
     }
 
     @Override
-    public void addFriend(User user, User friend) {
-        Integer userId = user.getId();
-        Integer friendId = friend.getId();
-        // Проверим существование пользователей.
-        if (isUserNotExist(userId)) {
-            throw new NotFoundException("Не найден пользователь: " + user);
-        }
-        if (isUserNotExist(friendId)) {
-            throw new NotFoundException("Не найден пользователь: " + friend);
-        }
-
-        // Сформируем тексты запросов, которые могут нам пригодиться.
-        final String SELECT_REQUEST = "SELECT * FROM friends WHERE user_id = ? AND friend_id = ?";
+    public void insertFriend(Integer userId, Integer friendId, boolean approved) {
         final String INSERT_REQUEST = "INSERT INTO friends (user_id, friend_id, approved) VALUES (?, ?, ?)";
+        jdbcTemplate.update(INSERT_REQUEST, userId, friendId, approved);
+    }
+
+    @Override
+    public void updateFriend(Integer userId, Integer friendId, boolean approved) {
         final String UPDATE_REQUEST = "UPDATE friends SET approved = ? WHERE user_id = ? AND friend_id = ?";
+        jdbcTemplate.update(UPDATE_REQUEST, approved, userId, friendId);
+    }
 
-        // Логика такая:
-        // 1. т.к. user сделал запрос дружбы с friend, то friend для user автоматически является подтвержденным другом.
-        SqlRowSet friendsRows = jdbcTemplate.queryForRowSet(SELECT_REQUEST, userId, friendId);
-        if (friendsRows.next()) {
-            jdbcTemplate.update(UPDATE_REQUEST, true, userId, friendId);
-        } else {
-            jdbcTemplate.update(INSERT_REQUEST, userId, friendId, true);
-        }
-        // 2. т.к. user сделал запрос дружбы с friend, то нужно проверить, является user другом для friend.
-        // Если является (не важно в каком статусе), то ничего не делаем.
-        // Иначе фиксируем запись, что user для friend на текущий момент является неподтвержденным другом.
-        friendsRows = jdbcTemplate.queryForRowSet(SELECT_REQUEST, friendId, userId);
-        if (!friendsRows.next()) {
-            jdbcTemplate.update(INSERT_REQUEST, friendId, userId, false);
-        }
-
-        // Обновим данные дружды для user и friend.
-        user.setFriends(getFriends(user));
-        friend.setFriends(getFriends(friend));
+    @Override
+    public boolean isUser1HaveFriendUser2(Integer userId1, Integer userId2) {
+        final String SELECT_REQUEST = "SELECT * FROM friends WHERE user_id = ? AND friend_id = ?";
+        SqlRowSet friendsRows = jdbcTemplate.queryForRowSet(SELECT_REQUEST, userId1, userId2);
+        return friendsRows.next();
     }
 
     @Override
@@ -220,7 +201,7 @@ public class UserDbStorage implements UserStorage {
             }
             int friendId = userRows.getInt("FRIEND_ID");
             if (friendId != 0) {
-                // Есть данные о друге. добавим их.
+                // Есть данные о друге. Добавим их.
                 Map<Integer, Boolean> friends = users.get(users.size() - 1).getFriends();
                 friends.put(friendId, userRows.getBoolean("APPROVED"));
             }

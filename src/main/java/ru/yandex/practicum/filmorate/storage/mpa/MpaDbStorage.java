@@ -24,7 +24,7 @@ public class MpaDbStorage {
         SqlRowSet mpaRows = jdbcTemplate.queryForRowSet(QUERY);
         List<Mpa> mpaRatings = new ArrayList<>();
         while (mpaRows.next()) {
-            mpaRatings.add(new Mpa(mpaRows.getInt("MPA_ID"),
+            mpaRatings.add(createMpaInMemory(mpaRows.getInt("MPA_ID"),
                     mpaRows.getString("MPA_NAME"),
                     mpaRows.getString("DESCRIPTION")));
         }
@@ -45,6 +45,10 @@ public class MpaDbStorage {
         } else {
             return Optional.empty();
         }
+    }
+
+    private Mpa createMpaInMemory(Integer id, String name, String description) {
+        return new Mpa(id, name, description);
     }
 
 }
