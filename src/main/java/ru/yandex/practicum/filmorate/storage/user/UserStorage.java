@@ -25,7 +25,7 @@ public interface UserStorage extends Storage<User> {
 
     void updateFriend(Integer userId, Integer friendId, boolean approved);
 
-    boolean isUser1HaveFriendUser2(Integer userId1, Integer userId2);
+    boolean isUserHaveAFriend(Integer userId, Integer friendId);
 
     boolean deleteFriend(User friend1, User friend2);
 

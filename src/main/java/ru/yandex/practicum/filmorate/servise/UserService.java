@@ -38,7 +38,7 @@ public class UserService implements ModelService<User> {
     public User add(User user) {
         log.debug("Начало добавления пользователя {}", user);
 
-        validate(user);
+        updateName(user);
         User addUser = storage.add(user);
 
         log.debug("Окончание добавления пользователя {}", addUser);
@@ -50,7 +50,7 @@ public class UserService implements ModelService<User> {
     public User update(User user) {
         log.debug("Начало обновления пользователя {}", user);
 
-        validate(user);
+        updateName(user);
         User updatedUser = storage.update(user);
 
         log.debug("Окончание обновления пользователя {}", updatedUser);
@@ -70,12 +70,6 @@ public class UserService implements ModelService<User> {
         return user;
     }
 
-    private void validate(User user) {
-        if (user.getName() == null || user.getName().isBlank()) {
-            user.setName(user.getLogin());
-        }
-    }
-
     public void addFriend(Integer userId, Integer friendId) {
         log.debug("Начало добавления пользователей с id {} и {} друг другу в друзья", userId, friendId);
 
@@ -89,7 +83,7 @@ public class UserService implements ModelService<User> {
 
         // Т.к. user сделал запрос дружбы с friend, то friend для user автоматически является подтвержденным другом.
         // Добавим пользователя friend в качестве подтвержденного пользователя для user
-        if (storage.isUser1HaveFriendUser2(userId, friendId)) {
+        if (storage.isUserHaveAFriend(userId, friendId)) {
             storage.updateFriend(userId, friendId, true);
         } else {
             storage.insertFriend(userId, friendId, true);
@@ -98,7 +92,7 @@ public class UserService implements ModelService<User> {
         // Т.к. user сделал запрос дружбы с friend, то нужно проверить, является user другом для friend.
         // Если является (неважно в каком статусе), то ничего не делаем.
         // Иначе фиксируем запись, что user для friend на текущий момент является неподтвержденным другом.
-        if (!storage.isUser1HaveFriendUser2(friendId, userId)) {
+        if (!storage.isUserHaveAFriend(friendId, userId)) {
             storage.insertFriend(friendId, userId, false);
         }
 
@@ -159,6 +153,12 @@ public class UserService implements ModelService<User> {
         log.debug("Окончание получения друзей пользователей с id {}", userId);
 
         return friends;
+    }
+
+    private void updateName(User user) {
+        if (user.getName() == null || user.getName().isBlank()) {
+            user.setName(user.getLogin());
+        }
     }
 
 }
