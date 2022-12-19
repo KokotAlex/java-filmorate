@@ -6,9 +6,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.PastOrPresent;
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @Getter
 @Setter
@@ -23,18 +21,16 @@ public class User {
     @PastOrPresent
     private LocalDate birthday;
 
-    private Set<Integer> friends = new HashSet<>();
+    private Map<Integer, Boolean> friends;
 
-    public User(String email, String login, String name, LocalDate birthday) {
-        // Выполним проверку корректности передаваемых данных.
+    public User() {}
+    public User(Integer id, String email, String login, String name, LocalDate birthday, Map<Integer, Boolean> friends) {
+        this.id = id;
         this.email = email;
         this.login = login;
-        if (name == null || name.isBlank()) {
-            this.name = this.login;
-        } else {
-            this.name = name;
-        }
+        this.name = name;
         this.birthday = birthday;
+        this.friends = friends;
     }
 
     @Override

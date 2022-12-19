@@ -4,6 +4,7 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.Storage;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public interface UserStorage extends Storage<User> {
@@ -20,13 +21,17 @@ public interface UserStorage extends Storage<User> {
     @Override
     Optional<User> getById(Integer id);
 
-    void addFriend(User friend1, User friend2);
+    void insertFriend(Integer userId, Integer friendId, boolean approved);
+
+    void updateFriend(Integer userId, Integer friendId, boolean approved);
+
+    boolean isUserHaveAFriend(Integer userId, Integer friendId);
 
     boolean deleteFriend(User friend1, User friend2);
 
-    List<User> getMutualFriends(User friend1, User friend2);
+    List<User> getMutualFriends(Integer friendId1, Integer friendId2);
 
-    List<User> getFriends(User user);
+    Map<Integer, Boolean> getFriends(User user);
 
     boolean isUserNotExist(Integer userId);
 
