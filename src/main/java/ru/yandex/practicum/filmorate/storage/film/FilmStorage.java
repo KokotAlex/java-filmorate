@@ -1,31 +1,41 @@
 package ru.yandex.practicum.filmorate.storage.film;
 
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.storage.Storage;
 
+import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 
-public interface FilmStorage extends Storage<Film> {
+public interface FilmStorage {
 
-    @Override
-    Film add(Film film);
+    List<Film> getRecommendations(int id);
 
-    @Override
-    List<Film> getAll();
+    Collection<Film> getFilms();
 
-    @Override
-    Film update(Film film);
+    List<Film> getCommonFilms(int userId, int friendId);
 
-    @Override
-    Optional<Film> getById(Integer id);
+    Film getFilmById(int filmId);
 
-    List<Film> getTop(Integer count);
+    Film createFilm(Film film);
 
-    Film addLike(Integer filmId, Integer userId);
+    Film updateFilm(Film film);
 
-    void deleteLike(Integer filmId, Integer userId);
+    Film deleteFilmById(int filmId);
 
-    boolean isFilmNotExist(Integer filmId);
+    Film addLike(int filmId, int userId);
 
+    Film removeLike(int filmId, int userId);
+
+    List<Film> getFilmsByDirectorIdSortedByLike(int directorId);
+
+    List<Film> getFilmsByDirectorIdSortedByReleaseDate(int directorId);
+
+    List<Film> getPopular(Integer limit, String condition);
+
+    boolean checkFilmExist(int filmId);
+
+    List<Film> searchFilmsByTitle(String query);
+
+    List<Film> searchFilmsByDirector(String query);
+
+    List<Film> searchFilmsByTitleAndDirector(String query);
 }

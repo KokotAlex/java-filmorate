@@ -1,72 +1,47 @@
 package ru.yandex.practicum.filmorate.model;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.List;
 
-@Getter
-@Setter
-@ToString
+@Builder
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class Film {
-    private Integer id;
+    int id;
+    @NotBlank(message = "Наименование фильма должно быть указано")
+    String name;
     @NotBlank
-    private String name;
-    @NotBlank
-    @Size(max = 200)
-    private String description;
-    @NotNull
-    private LocalDate releaseDate;
-    @Positive
-    private Integer duration;
-
+    @Size(max = 200, message = "Описание не может быть длиннее 200 символов")
+    String description;
+    @NotNull(message = "Дата релиза должна быть указана")
+    LocalDate releaseDate;
+    @NotNull(message = "Продолжительность фильма должна быть указана")
+    @PositiveOrZero(message = "Продолжительность фильма не может быть отрицательной")
+    Long duration;
+    private List<Integer> usersLikes;
     private Mpa mpa;
+    private List<Genre> genres;
+    private List<Director> directors;
 
-    private TreeSet<Genre> genres;
-    private Set<Integer> likes = new HashSet<>();
-
-    public Film() {}
-
-    public Film(Integer id,
-                String name,
-                String description,
-                LocalDate releaseDate,
-                Integer duration,
-                Mpa mpa,
-                TreeSet<Genre> genres) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.releaseDate = releaseDate;
-        this.duration = duration;
-        this.genres = genres;
-        this.mpa = mpa;
+    public void addGenre(Genre genre) {
+        genres.add(genre);
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Film film = (Film) o;
-
-        return Objects.equals(id, film.id);
+    public void addDirector(Director director) {
+    directors.add(director);
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
+    public void addLikes(Integer userId) {
+        usersLikes.add(userId);
     }
-
-    public static class LikeComparator implements Comparator<Film> {
-
-        @Override
-        public int compare(Film film1, Film film2) {
-            return film1.likes.size() - film2.likes.size();
-        }
-    }
-
 }

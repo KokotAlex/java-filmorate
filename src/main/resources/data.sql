@@ -1,16 +1,12 @@
--- Заполним таблицу "genre" значениями
-MERGE INTO genre (GENRE_ID, GENRE_NAME)
-VALUES (1, 'Комедия'),
-       (2, 'Драма'),
-       (3, 'Мультфильм'),
-       (4, 'Триллер'),
-       (5, 'Документальный'),
-       (6, 'Боевик');
+MERGE INTO genre (id, name) VALUES (1, 'Комедия');
+MERGE INTO genre (id, name) VALUES (2, 'Драма');
+MERGE INTO genre (id, name) VALUES (3, 'Мультфильм');
+MERGE INTO genre (id, name) VALUES (4, 'Триллер');
+MERGE INTO genre (id, name) VALUES (5, 'Документальный');
+MERGE INTO genre (id, name) VALUES (6, 'Боевик');
 
--- Заполним таблицу "mpa" значениями
-MERGE INTO mpa (MPA_ID, MPA_NAME, DESCRIPTION)
-VALUES (1, 'G', 'у фильма нет возрастных ограничений'),
-       (2, 'PG', 'детям рекомендуется смотреть фильм с родителями'),
-       (3, 'PG-13', 'детям до 13 лет просмотр не желателен'),
-       (4, 'R', 'лицам до 17 лет просматривать фильм можно только в присутствии взрослого'),
-       (5, 'NC-17', 'лицам до 18 лет просмотр запрещён');
+MERGE INTO mpa (id, name) VALUES (1, 'G');
+MERGE INTO mpa (id, name) VALUES (2, 'PG');
+MERGE INTO mpa (id, name) VALUES (3, 'PG-13');
+MERGE INTO mpa (id, name) VALUES (4, 'R');
+MERGE INTO mpa (id, name) VALUES (5, 'NC-17');
