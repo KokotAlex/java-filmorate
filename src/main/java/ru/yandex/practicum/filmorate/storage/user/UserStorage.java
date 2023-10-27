@@ -1,38 +1,31 @@
 package ru.yandex.practicum.filmorate.storage.user;
 
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.Storage;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
-public interface UserStorage extends Storage<User> {
+public interface UserStorage {
 
-    @Override
-    User add(User user);
+    List<User> getUsers();
 
-    @Override
-    List<User> getAll();
+    Optional<User> getUserById(int userId);
 
-    @Override
-    User update(User user);
+    int createUser(User user);
 
-    @Override
-    Optional<User> getById(Integer id);
+    void updateUser(User user);
 
-    void insertFriend(Integer userId, Integer friendId, boolean approved);
+    void deleteById(int userId);
 
-    void updateFriend(Integer userId, Integer friendId, boolean approved);
+    void addFriendship(int userId, int friendId);
 
-    boolean isUserHaveAFriend(Integer userId, Integer friendId);
+    void removeFriendship(int userId, int friendId);
 
-    boolean deleteFriend(User friend1, User friend2);
+    List<User> findFriends(int id);
 
-    List<User> getMutualFriends(Integer friendId1, Integer friendId2);
+    List<User> getMutualFriends(int id, int otherId);
 
-    Map<Integer, Boolean> getFriends(User user);
+    boolean checkUserExist(int userId);
 
-    boolean isUserNotExist(Integer userId);
-
+    List<Integer> getFriendsIdByUserId(int userId);
 }

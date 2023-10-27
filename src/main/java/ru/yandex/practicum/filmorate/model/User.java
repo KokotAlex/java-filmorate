@@ -1,49 +1,31 @@
 package ru.yandex.practicum.filmorate.model;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.PastOrPresent;
+import javax.validation.constraints.*;
 import java.time.LocalDate;
-import java.util.*;
 
-@Getter
-@Setter
-@ToString
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class User {
-    private Integer id;
-    @Email
+    private int id;
+
+    @Email(message = "Email не соответствует формату")
+    @NotBlank(message = "Email не может быть пустым")
+    @Size(max = 50, message = "Email не может быть длиннее 50 символов")
     private String email;
-    @NotBlank
+
+    @NotBlank(message = "Логин не может быть пустым")
+    @Size(max = 50, message = "Логин не может быть длиннее 50 символов")
     private String login;
+
+    @Size(max = 50, message = "Имя не может быть длиннее 50 символов")
     private String name;
-    @PastOrPresent
+
+    @PastOrPresent(message = "Дата рождения не может быть в будущем")
+    @NotNull(message = "Дата рождения не может отсутствовать")
     private LocalDate birthday;
-
-    private Map<Integer, Boolean> friends;
-
-    public User() {}
-    public User(Integer id, String email, String login, String name, LocalDate birthday, Map<Integer, Boolean> friends) {
-        this.id = id;
-        this.email = email;
-        this.login = login;
-        this.name = name;
-        this.birthday = birthday;
-        this.friends = friends;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        User user = (User) o;
-
-        return Objects.equals(id, user.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
 }
